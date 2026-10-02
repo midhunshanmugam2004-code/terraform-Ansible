@@ -1,0 +1,38 @@
+---
+- hosts: midhun
+  become: true
+  tasks:
+    - name: waiting for ssh
+      ansible.builtin.wait_for_connection:
+        timeout: 300
+        
+    - name: update
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: install docker
+      ansible.builtin.apt:
+        name: docker.io
+        state: present
+    - name: Install Apache
+      ansible.builtin.apt:
+        name: apache2
+        state: present
+        update_cache: true
+
+    - name: Start Apache
+      ansible.builtin.service:
+        name: apache2
+        state: started
+        enabled: true
+
+    - name: html page
+      ansible.builtin.template:
+        src: template/index.html
+        dest: /var/www/html/index.html
+        owner: root
+        group: root
+        mode: "0644"
+
+        
